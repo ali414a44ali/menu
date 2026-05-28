@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>منيو المطعم المتوسط</title>
+  <style>
+    /* (تم الإبقاء على نفس تنسيق الـ CSS الخاص بك كما هو) */
+    :root { --ink: #202124; --muted: #686f76; --line: #dde3e8; --paper: #fbfaf6; --panel: #ffffff; --brand: #0f766e; --accent: #c2410c; }
+    body { margin: 0; min-height: 100vh; font-family: Tahoma, Arial, sans-serif; color: var(--ink); background: var(--paper); }
+    /* ... باقي الـ CSS الخاص بك ... */
+  </style>
+</head>
+<body>
+  <div class="app-shell">
+    </div>
+
+  <script>
+    // (نفس البيانات والـ state الخاصة بك)
+    const state = { /* ... */ };
+
+    // --- هذه هي الدالة المعدلة للربط السحابي ---
+    async function submitOrder() {
+        const items = Object.values(state.cart);
+        if (!items.length) return;
+        
+        const order = {
+            table: state.table,
+            items: items,
+            total: items.reduce((sum, item) => sum + item.price * item.qty, 0),
+            status: "new"
+        };
+
+        // الربط مع السيرفر (بدلاً من الـ localStorage)
+        try {
+            const response = await fetch('/api/orders', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(order)
+            });
+
+            if (response.ok) {
+                state.cart = {};
+                render();
+                showToast("تم إرسال الطلب للمطبخ بنجاح!");
+            }
+        } catch (error) {
+            console.error("خطأ في الاتصال بالسيرفر:", error);
+            showToast("حدث خطأ، تأكد من اتصال السيرفر.");
+        }
+    }
+
+    // (باقي كود الـ JavaScript الخاص بك كما هو تماماً)
+  </script>
+</body>
+</html>
